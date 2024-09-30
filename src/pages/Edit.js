@@ -1,44 +1,61 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
-
-import "react-toastify/dist/ReactToastify.css";
 
 function Edit() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [carnets, setCarnets] = useState({
-    nom: "",
-    email: "",
-    contact: "",
-  });
+  const [nom, setNom] = useState("");
+  const [email, setEmail] = useState("");
+  const [contact, setContact] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDfealut();
-    axios
-      .get(`http://localhost:8000/api/carnet`, carnets)
-      .then((res) => navigate("/"))
-      .catch((err) => console.log(err));
-  };
 
-  useEffect(() => {
-    axios
-      .put(`http://localhost:8000/api/carnet/edit/${id}`, carnets)
-      .then((res) =>
-        setCarnets({
-          ...carnets,
-          nom: res.data.nom,
-          email: res.data.email,
-          contact: res.data.contact,
-        })
-      )
-      .catch((err) => console.log(err));
-  }, []);
+  const editPost = async(e) =>{
+    e.preventDefault();
+  
+    const postData = new FormData();
+    postData.set("nom", nom);
+    postData.set("email", email);
+    postData.set("contact", contact);
+   
+    try {
+      const response = await axios.put(`http://localhost:8000/api/carnet/edit/${id}`,
+        postData,
+      );
+  
+      if (response.status == 200) {
+        return navigate("/");
+      }
+    } catch (err) {
+      console.log(err)
+      
+    }
+  
+  
+  }
+  
+  useEffect(() =>{
+    const getInfo = async() =>{
+
+      try {
+        const response = await axios.get(`http://localhost:8000/api/carnet`)
+          setNom(response.data.nom)
+          setEmail(response.data.email)
+          setContact(response.data.contact)
+  
+        
+      } catch (error) {
+        console.log(error)
+        
+      }
+    }
+    getInfo()
+  
+  },[])
 
   return (
     <div className="container">
-      <form>
+      <form onSubmit={editPost}>
         <div className="row">
           <div className="col">
             <label htmlFor="">Nom</label>
@@ -47,21 +64,19 @@ function Edit() {
               className="form-control"
               placeholder="Nom"
               name="nom"
-              value={carnets.nom}
-              onChange={(e) => setCarnets({ ...carnets, nom: e.target.value })}
+              value={nom}
+              onChange={(e) => setNom(e.target.nom)}
             />
           </div>
           <div className="col">
             <label htmlFor="">Email</label>
             <input
               name="email"
-              value={carnets.email}
               type="email"
               className="form-control"
               placeholder="Email"
-              onChange={(e) =>
-                setCarnets({ ...carnets, email: e.target.value })
-              }
+              value={email}
+              onChange={(e) => setEmail(e.target.email)}
             />
           </div>
         </div>
@@ -70,13 +85,11 @@ function Edit() {
           <label htmlFor="">Contact</label>
           <input
             name="contact"
-            onChange={(e) =>
-              setCarnets({ ...carnets, contact: e.target.value })
-            }
-            value={carnets.contact}
+            onChange={(e) => setContact(e.target.value)}
             type="number"
             className="form-control"
             placeholder="Contact"
+            value={contact}
           />
         </div>
 

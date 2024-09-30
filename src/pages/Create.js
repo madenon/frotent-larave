@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -9,7 +8,6 @@ function Create() {
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
-  const {id} = useParams()
  
   const onSubmitHanlder = async (e) => {
     e.preventDefault();
