@@ -6,10 +6,15 @@
   background-color: red !important;
   color:  white !important;
   margin: 8px ;
-  padding: 10px;
+  padding: 10px; gap: 3px;
+  display: flex
 }
 
 .modifier{
   background-color: rgb(39, 39, 155) !important;
   color: white !important;
+}
+
+a{
+  list-style: none;
 }

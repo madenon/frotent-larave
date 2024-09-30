@@ -1,10 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react"
 import {  toast } from 'react-toastify';
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 function Home(){
     const [carnets, setCarnet] = useState([])
-
 
     const getData = async()=>{
         const response = await fetch("http://localhost:8000/api/carnet").then((response)=>response.json());
@@ -47,6 +46,7 @@ function Home(){
 <div className="table table-striped">
     <thead>
 <tr>
+    <th>ID</th>
     <th>Nom</th>
     <th>Email</th>
     <th>Contact</th>
@@ -59,13 +59,18 @@ function Home(){
         {carnets.map((item,index)=>{
             return(
                 <tr key={index}>
+                    <td>{item?.id}</td>
                     <td>{item.nom}</td>
                     <td>{item.email}</td>
                     <td>{item.contact}</td>
-                     <Link to="/edit">
-                     <button className="modifier">Modifier</button>
-                     </Link>
-                    <button className="pointer-cursor ml-10 btn btn-danger btn-b" onClick={()=>removeProduct(item?.id)}>X</button>
+
+                     <td className="modifier">
+                        <Link to={`/edit/${item?.id}`} className="">Modifier</Link>
+                        
+                     </td>
+
+                    
+                    <td className="pointer-cursor  btn btn-danger btn-b" onClick={()=>removeProduct(item?.id)}>X</td>
                     
                 </tr>
             )

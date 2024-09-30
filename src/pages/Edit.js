@@ -1,68 +1,67 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 
 function Edit() {
-  const [nom, setNom] = useState("");
-  const [email, setEmail] = useState("");
-  const [contact, setContact] = useState("");
- 
-  const onSubmitHanlder = async (e) => {
-    e.preventDefault();
-    try {
-      const formData = new FormData();
-      formData.append("nom", nom);
-      formData.append("email", email);
-      formData.append("contact", contact);
-    
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [carnets, setCarnets] = useState({
+    nom: "",
+    email: "",
+    contact: "",
+  });
 
-      const response = await axios.post(
-        `http://localhost:8000/api/carnet/edit}`,
-        formData
-      );
-      console.log(response.data)
-
-
-      if (response.data) {
-        toast.success(response.data);
-        setNom("");
-        setEmail("");
-        setContact("");
-        
-      } else {
-        toast.error(response.data);
-      }
-
-    } catch (error) {
-      console.log(error);
-      toast.error(error.message);
-    }
+  const handleSubmit = (e) => {
+    e.preventDfealut();
+    axios
+      .get(`http://localhost:8000/api/carnet`, carnets)
+      .then((res) => navigate("/"))
+      .catch((err) => console.log(err));
   };
+
+  useEffect(() => {
+    axios
+      .put(`http://localhost:8000/api/carnet/edit/${id}`, carnets)
+      .then((res) =>
+        setCarnets({
+          ...carnets,
+          nom: res.data.nom,
+          email: res.data.email,
+          contact: res.data.contact,
+        })
+      )
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
     <div className="container">
-      <form onSubmit={onSubmitHanlder}>
+      <form>
         <div className="row">
           <div className="col">
             <label htmlFor="">Nom</label>
             <input
-              onChange={(e) => setNom(e.target.value)}
-              value={nom}
               type="text"
               className="form-control"
               placeholder="Nom"
+              name="nom"
+              value={carnets.nom}
+              onChange={(e) => setCarnets({ ...carnets, nom: e.target.value })}
             />
           </div>
           <div className="col">
             <label htmlFor="">Email</label>
             <input
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
+              name="email"
+              value={carnets.email}
               type="email"
               className="form-control"
               placeholder="Email"
+              onChange={(e) =>
+                setCarnets({ ...carnets, email: e.target.value })
+              }
             />
           </div>
         </div>
@@ -70,18 +69,19 @@ function Edit() {
         <div className="col">
           <label htmlFor="">Contact</label>
           <input
-            onChange={(e) => setContact(e.target.value)}
-            value={contact}
+            name="contact"
+            onChange={(e) =>
+              setCarnets({ ...carnets, contact: e.target.value })
+            }
+            value={carnets.contact}
             type="number"
             className="form-control"
             placeholder="Contact"
           />
         </div>
 
-       
-
-        <button type="button" className="btn btn-primary mt-2">
-          Update
+        <button type="submit" className="btn btn-primary mt-2">
+          Envoyer
         </button>
       </form>
     </div>
